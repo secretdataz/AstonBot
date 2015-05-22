@@ -25,13 +25,11 @@ namespace AstonBot
         public static string roomid;
         public static string roomowner;
 
-        public Aston()
+        public static WriteLog Log;
+        
+        public Aston(string roomid, string token)
         {
             AddCommand();
-            Console.Write("Enter Mylive room Id : ");
-            roomid = Console.ReadLine();
-            Console.Write("Enter user token (optional) : ");
-            string token = System.Console.ReadLine();
             using (WebClient x = new WebClient())
             {
                 string source = x.DownloadString("http://mylive.in.th/streams/" + roomid);
@@ -52,11 +50,9 @@ namespace AstonBot
                 }
             }
             WebsocketThread = new WSThreadWrapper(roomid, token);
-            while(true)
-            {
-                //
-            }
         }
+
+        public delegate void WriteLog(String message);
 
         public static void ParseMessage(dynamic data)
         {
@@ -76,7 +72,7 @@ namespace AstonBot
                     cmd.Parse(msg);
                 }
             }
-            Console.WriteLine("[*] Message Received from " + msg.Sender + ": " + msg.Msg);
+            Log("[*] Message Received from " + msg.Sender + ": " + msg.Msg);
         }
 
         public static Message GetMessage(dynamic data)
@@ -106,7 +102,7 @@ namespace AstonBot
             if(UsernameMatch.Success)
             {
                 self = UsernameMatch.Groups[1].Value;
-                UpdateTitle();
+                //UpdateTitle();
             }
         }
         public void AddCommand()
@@ -136,9 +132,9 @@ namespace AstonBot
             return EnumRole;
         }
 
-        public static void UpdateTitle()
+        /*public static void UpdateTitle()
         {
             Console.Title = "Aston Bot :: " + self + " / Room " + roomowner + "(" + roomid + ")";
-        }
+        }*/
     }
 }

@@ -35,18 +35,18 @@ namespace AstonBot.WS
             websocketClient.Error += new EventHandler<SuperSocket.ClientEngine.ErrorEventArgs>(websocketClient_Error);
             websocketClient.Opened += new EventHandler(websocketClient_Opened);
             websocketClient.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocketClient_MessageReceived);
-            Console.WriteLine("[-] WebSocket initiated.");
+            Aston.Log("WebSocket initiated.");
         }
         public void Start()
         {
             websocketClient.Open();
-            Console.WriteLine("[-] WebSocket starting.");
+            Aston.Log("WebSocket starting.");
         }
 
         public void Stop()
         {
             websocketClient.Close();
-            Console.WriteLine("[-] WebSocket closing.");
+            Aston.Log("WebSocket closing.");
         }
         
         public void SendMessage(string Msg)
@@ -74,17 +74,17 @@ namespace AstonBot.WS
             var json = JsonConvert.SerializeObject(new { cmd = "auth", hashkey = token, roomname = roomid },
             new JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.None });
             websocketClient.Send(json);
-            System.Console.WriteLine("[-] WebSocket started.");
+            Aston.Log("WebSocket started.");
             SendMessage(Aston.SELFMSG);
         }
 
         private void websocketClient_Error(object sender, SuperSocket.ClientEngine.ErrorEventArgs e)
         {
-            System.Console.WriteLine(e.Exception.GetType() + ": " + e.Exception.Message + Environment.NewLine + e.Exception.StackTrace);
+            Aston.Log(e.Exception.GetType() + ": " + e.Exception.Message + Environment.NewLine + e.Exception.StackTrace);
 
             if (e.Exception.InnerException != null)
             {
-                System.Console.WriteLine(e.Exception.InnerException.GetType());
+                Aston.Log(e.Exception.InnerException.GetType().ToString());
             }
 
             return;
@@ -92,7 +92,7 @@ namespace AstonBot.WS
 
         private void websocketClient_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Console.WriteLine(e.Message);
+            Aston.Log(e.Message);
             dynamic json = JValue.Parse(e.Message);
             string type = json.type;
             switch(type)
@@ -107,7 +107,7 @@ namespace AstonBot.WS
                     Aston.ParseAssign(json);
                     break;
                 default:
-                    Console.WriteLine("Unknow message type : " + e.Message);
+                    Aston.Log("Unknow message type : " + e.Message);
                     break;
             }
         }
